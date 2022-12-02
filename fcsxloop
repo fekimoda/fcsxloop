@@ -1,0 +1,48 @@
+import sys
+import getpass
+import difflib
+import netmiko
+from netmiko import ConnectHandler
+
+
+networkinfo = {
+        "device_type": "cisco_ios",
+        "host": "192.168.56.101",
+        "username": "cisco",
+        "password": "",
+        "secret": ""
+    }
+ 
+networkinfo["username"] = input("Please enter device username: ")
+networkinfo["password"] = getpass.getpass("Please enter the device password: ")
+networkinfo["secret"] = getpass.getpass("Please enter the  device secret: ")
+user_choice = input("[1] LOOPBACK [2] OSFP")
+
+if user_choice == "1":
+    
+    session = netmiko.ConnectHandler(**networkinfo)
+    
+    config_commands = ["int loopback1", "ip address 172.100.1.1 255.255.255.2555", "exit"]
+
+    output = session.send_command("show ip interface brief")
+    print("{}\n".format(output))
+
+    session.enable()
+    setConfig = session.send_config_set(config_commands)
+    print("{}\n".format(output))
+
+
+elif user_choice == "2":
+    session = netmiko.ConnectHandler(**networkinfo)
+
+
+    config_commands = ["router ospf 10", "network 192.168.1.2 0.0.0.255 area 0", "exit"]
+
+    output = session.send_command("show ip ospf")
+    print("{}\n".format(output))
+ 
+    session.enable()
+    setConfig = session.send_config_set(config_commands)
+    print("{}\n".format(output))   
+   
+   
